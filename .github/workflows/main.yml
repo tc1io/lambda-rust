@@ -1,6 +1,8 @@
 name: Main
 
-on: push
+on:
+  push:
+    branches: [ master ]
 
 jobs:
   test:
@@ -8,7 +10,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Test
-        run: make test
+        run: make test-nightly
   publish-docs:
     needs: [test]
     runs-on: ubuntu-latest
@@ -28,10 +30,10 @@ jobs:
       - uses: actions/checkout@v1
       - name: Build
         shell: bash
-        run: make build
+        run: make build-nightly
       - name: Publish
         if: startsWith(github.ref, 'refs/tags/')
         shell: bash
         run: |
           echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-          make publish
+          make publish-nightly
